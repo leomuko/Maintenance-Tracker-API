@@ -9,12 +9,12 @@ class TestRequests(unittest.TestCase):
 
     def test_get_all_requests(self):
         response = self.testing.get('/app/v1/users/requests')
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
 
     def test_get_single_request(self):
         requestId = json.loads(self.testing.data)["requestId"]
         response = self.testing.get('/api/v1/users/requests/{}/'.format(requestId))
-        self.assertEqual(response.status_code, 201)  
+        self.assertEqual(response.status_code, 200)  
         
 
     def test_create_request(self):
