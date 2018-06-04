@@ -1,5 +1,5 @@
 from flask import Flask,request, abort, jsonify
-
+import json 
 
 app = Flask(__name__)
 
@@ -34,18 +34,23 @@ def get_request_by_id(requestId):
 
 @app.route('/api/v1/users/requests/<int:requestId>', methods=['PUT'])
 def modify_request(requestId):
-    Request = [Request for Request in Requests if Request['requestId'] == requestId ]
-    if len(Request) == 0:
-        return abort(400)
+    #Modify = [Request for Request in Requests if Request['requestId'] == requestId] 
+    
+    for Request in Requests:
+        if Request['requestId'] == requestId:
+            return Request
+        else:
+            return abort(400)
     if not request.json:
         return abort(400)
-    Requests.remove(Request)    
+        
     New_Request = { 'requestId': requestId,
                  'requestType': request.json.get('requestType'),
                  'details': request.json.get('details')
     }
+    Requests.remove(Requests[0])
     Requests.append(New_Request)    
-    return jsonify({'Modified Request', New_Request}), 201
+    return jsonify({'Modified Request',Requests}), 201
 
 
 
