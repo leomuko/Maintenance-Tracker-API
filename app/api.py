@@ -34,23 +34,18 @@ def get_request_by_id(requestId):
 
 @app.route('/api/v1/users/requests/<int:requestId>', methods=['PUT'])
 def modify_request(requestId):
-    #Modify = [Request for Request in Requests if Request['requestId'] == requestId] 
-    
-    for Request in Requests:
-        if Request['requestId'] == requestId:
-            return Request
-        else:
-            return abort(400)
+    Modify = [Request for Request in Requests if Request['requestId'] == requestId] 
+    if len(Modify) == 0:
+        abort(404)
     if not request.json:
-        return abort(400)
-        
-    New_Request = { 'requestId': requestId,
-                 'requestType': request.json.get('requestType'),
-                 'details': request.json.get('details')
-    }
-    Requests.remove(Requests[0])
-    Requests.append(New_Request)    
-    return jsonify({'Modified Request',Requests}), 201
+        abort(400)
+    if 'details' in request.json and type(request.json['details']) is not unicode:
+        abort(400)  
+   
+    Modify[0]['requestType'] = request.json.get('requestType', Modify[0]['requestType'])
+    Modify[0]['details'] = request.json.get('details', Modify[0]['requestType'])
+    return jsonify({'Request': Modify[0]})      
+   
 
 
 
