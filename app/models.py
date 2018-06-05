@@ -13,13 +13,6 @@ class CreateTables:
         user_table_create = "CREATE TABLE Users(User_Id serial PRIMARY KEY, FirstName varchar(100) NOT NULL, LastName varchar(100) NOT NULL,Email varchar(100) NOT NULL, password varchar(100) NOT NULL)"
         self.cursor.execute(user_table_create)
 
-   
-class Users():
-    def __init__(self):
-        self.dbconnect = psycopg2.connect(database="postgres", user = "postgres", password = "test123", host = "127.0.0.1", port = "5432")
-        self.dbconnect.autocommit = True
-        self.cursor = self.dbconnect.cursor()
-
     def create_new_user(self,Fname,Lname,Email,Password):
         new_user =   "INSERT INTO Users(FirstName, LastName, Email, password) VALUES(%s,%s,%s,%s)",(Fname, Lname, Email,Password)
         self.cursor.execute(new_user)
