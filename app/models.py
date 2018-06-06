@@ -1,5 +1,4 @@
 import psycopg2
-import pprint
 
 
 class USERS:
@@ -37,6 +36,13 @@ class Requests():
         self.cursor.execute(request_table_create)
         self.dbconnect.commit()
 
+    def create_new_user_request(self,Id,Type,Details):
+        new_request = "INSERT INTO Requests( USerId, RequestType, RequestDetails) VALUES( '{}','{}','{}')".format(Id,Type,Details) 
+        self.cursor.execute(new_request)
+        self.dbconnect.commit()
+
+
+
     def view_all_requests(self):
         requests = "SELECT * FROM Requests"
         self.cursor.execute(requests)
@@ -47,6 +53,11 @@ class Requests():
         self.cursor.execute(requests)
         self.dbconnect.commit()          
     
+    def specific_request(self, requestId):
+        request = "SELECT * FROM Requests WHERE Request_Id = '{}'".format(requestId)
+        self.cursor.execute(request)
+        self.dbconnect.commit()
+
     
 '''if __name__ == '__main__':
     User_table = USERS()
