@@ -56,7 +56,8 @@ def user_login():
 @app.route('/users/requests',methods=['POST'])
 @token_required
 def create_user_request(current_user):
-    Userid = request.json.get('UserId')
+    Email = request.json.get('Email')
+    Userid = User_table.get_user_Id(Email)
     RequestType = request.json.get('RequestType')
     RequestDetails = request.json.get('Details')
     Request_table.create_new_user_request(Userid,RequestType,RequestDetails)
@@ -67,7 +68,8 @@ def create_user_request(current_user):
 @app.route('/users/requests', methods=['GET'])
 @token_required
 def view_all_requests(current_user):
-   Userid = 3
+   Email = request.json.get('Email')
+   Userid = User_table.get_user_Id(Email)
    return jsonify(Request_table.all_requests_for_specific_user(Userid))
 
 
