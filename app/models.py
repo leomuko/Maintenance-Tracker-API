@@ -36,9 +36,15 @@ class USERS:
         user = "SELECT User_Id FROM Users WHERE Email = '{}'".format(Email)
         self.cursor.execute(user)
         user_id = self.cursor.fetchall()
+        new_list = []
+        new_dict = {}
         for i in user_id:
-            USERID = i
-        return USERID    
+            new_dict['q'] = i[0]
+            new_list.append(new_dict)
+            for k in new_list:
+                the_id = k['q']
+        return the_id
+
 
 
 
