@@ -46,7 +46,19 @@ class Requests():
     def view_all_requests(self):
         requests = "SELECT * FROM Requests"
         self.cursor.execute(requests)
-        self.dbconnect.commit()
+        all_requests = self.cursor.fetchall()
+        
+        request_dictionary = {}
+        request_List = []
+        for i in all_requests:
+            request_dictionary['request_Id'] = i[0]
+            request_dictionary['userId'] = i[1]
+            request_dictionary['requestType'] = i[2]
+            request_dictionary['details'] = i[3]
+            request_List.append(request_dictionary)
+            request_dictionary ={}
+        return request_List    
+
 
     def all_requests_for_specific_user(self,userId):
         requests = "SELECT * FROM Requests WHERE UserId = '{}' ".format(userId)
@@ -56,7 +68,29 @@ class Requests():
     def specific_request(self, requestId):
         request = "SELECT * FROM Requests WHERE Request_Id = '{}'".format(requestId)
         self.cursor.execute(request)
+        user_request = self.cursor.fetchall()
+        request_dictionary = {}
+        request_List = []
+        for i in user_request:
+            request_dictionary['request_Id'] = i[0]
+            request_dictionary['userId'] = i[1]
+            request_dictionary['requestType'] = i[2]
+            request_dictionary['details'] = i[3]
+            request_List.append(request_dictionary)
+            request_dictionary ={}
+        return request_List
+
+    def modify_request(self,requestId,Type,Details):
+        new_request = "UPDATE Requests SET RequestType = '{}', RequestDetails = '{}' WHERE Request_Id ='{}'".format(Type,Details,requestId)
+        self.cursor.execute(new_request)
         self.dbconnect.commit()
+
+        
+        
+
+        
+
+
 
     
 '''if __name__ == '__main__':
