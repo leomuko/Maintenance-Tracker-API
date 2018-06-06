@@ -20,10 +20,22 @@ def create_user_request():
 
 
 
-@app.route('/users/requests/<int:requestId>', methods=['GET'])
-def view_specific_request(requestId):
-   requestId = request.json.get('requestId')
-   Request_table.specific_request(requestId)
+@app.route('/users/requests', methods=['GET'])
+def view_all_requests():
+   return jsonify(Request_table.view_all_requests())
+
+
+@app.route('/users/requests/<int:Request_id>', methods=['GET'])
+def view_specific_request(Request_id):
+    return jsonify(Request_table.specific_request(Request_id))
+
+
+@app.route('/users/requests/<int:Request_id>', methods=['PUT'])
+def modify_user_request(Request_id):
+    R_type = request.json.get('RequestType')
+    R_details = request.json.get('Details')
+    Request_table.modify_request(Request_id,R_type,R_details) 
+    return jsonify({'message':'Request successfully modified'})   
 
 
 
