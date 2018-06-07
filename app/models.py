@@ -101,8 +101,8 @@ class Requests():
             request_dictionary ={}
         return request_list         
     
-    def specific_request(self, requestId):
-        request = "SELECT * FROM Requests WHERE Request_Id = '{}'".format(requestId)
+    def specific_request(self, requestId,userId):
+        request = "SELECT * FROM Requests WHERE Request_Id = '{}' AND userId = '{}'".format(requestId, userId)
         self.cursor.execute(request)
         user_request = self.cursor.fetchall()
         request_dictionary = {}
@@ -122,7 +122,15 @@ class Requests():
         self.cursor.execute(new_request)
         self.dbconnect.commit()
 
-
+    def check_if_request_exists(self, userId, r_id):
+        reque= "SELECT Request_Id FROM Requests WHERE UserId = '{}' AND Request_Id ='{}' ".format(userId,r_id)
+        self.cursor.execute(reque)
+        self.dbconnect.commit()
+        if len(reque) >0:
+            return True
+        else:
+            return False    
+        
 class Administrator():
     def __init__(self):
         self.dbconnect = psycopg2.connect(database="postgres", user = "postgres", password = "test123", host = "127.0.0.1", port = "5432")
