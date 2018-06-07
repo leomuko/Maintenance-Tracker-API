@@ -7,7 +7,6 @@ import json
 Admin = Administrator()
 
 
-
 app = Flask(__name__)
 app.config['SECRET KEY'] = 'thisissecret'
 
@@ -38,12 +37,17 @@ def token_required(f):
 def admin_login():
     Email = request.json.get('Email')
     password = request.json.get('password')
-    Email = 'admin@admin'
-    password = 'password'
+
     if not Email:
-        return jsonify({'message':'Wrong email'})
-    if not password:
-        return jsonify({'message':'Wrong password'})    
+        return jsonify({'message':'Please Enter Email'})
+
+    elif not password:
+        return jsonify({'message':'Wrong password'})
+
+    elif Email != 'admin@admin':
+        return jsonify({'message':'Please enter correct Email'})
+    elif password != 'password':
+        return jsonify({'message':'Please enter correct password'})
     else:
         token = jwt.encode({'Email':Email}, app.config['SECRET KEY'])   
         return jsonify({'token':token.decode('UTF-8')})
@@ -52,25 +56,47 @@ def admin_login():
 @app.route('/admin/requests', methods=['GET'])
 @token_required
 def all_requests(admin):
-    return jsonify(Admin.get_all_requests())
+    all_user_requests = Admin.get_all_requests()
+    if len(all_user_requests) == 0:
+        return jsonify({'message': 'There are no User requests'})    
+    else:    
+        return jsonify(all_user_requests)
 
 @app.route('/admin/requests/<requestId>/approve', methods=['PUT'])
 @token_required
 def approve_request(admin,requestId):
-    Admin.approve_request(requestId)
-    return jsonify({'message':'Successfully approved'})
+    all_user_requests = Admin.get_all_requests()
+    if len(all_user_requests) == 0:
+        return jsonify({'message': 'There are no User requests'}) 
+    elif Admin.check_for_request(requestId) is False:
+        return jsonify({'message':'Request does not exist'})
+    else:   
+        Admin.approve_request(requestId)
+        return jsonify({'message':'Successfully approved'})
 
 @app.route('/admin/requests/<requestId>/disapprove', methods=['PUT'])
 @token_required
 def disapprove_request(admin,requestId):
-    Admin.disapprove_request(requestId)
-    return jsonify({'message':'Successfully disapproved'})
+    all_user_requests = Admin.get_all_requests()
+    if len(all_user_requests) == 0:
+        return jsonify({'message': 'There are no User requests'}) 
+    elif Admin.check_for_request(requestId) is False:
+        return jsonify({'message':'Request does not exist'})
+    else:   
+        Admin.disapprove_request(requestId)
+        return jsonify({'message':'Successfully approved'})
 
 @app.route('/admin/requests/<requestId>/resolve', methods=['PUT'])
 @token_required
 def resolve_request(admin,requestId):
-    Admin.resolve_request(requestId)
-    return jsonify({'message':'Successfully resolved'})    
+    all_user_requests = Admin.get_all_requests()
+    if len(all_user_requests) == 0:
+        return jsonify({'message': 'There are no User requests'}) 
+    elif Admin.check_for_request(requestId) is False:
+        return jsonify({'message':'Request does not exist'})
+    else:   
+        Admin.disapprove_request(requestId)
+        return jsonify({'message':'Successfully approved'})
 
 
 
