@@ -27,7 +27,7 @@ class USERS:
         user_dictionary ={}
         for i in user_data:
             user_dictionary['Email'] = i[0]
-            user_dictionary['password'] = i[1] 
+            user_dictionary['password'] = i[1]
             user_list.append(user_dictionary)   
             user_dictionary = {}
         return user_list
@@ -44,7 +44,19 @@ class USERS:
             for k in new_list:
                 the_id = k['q']
         return the_id
-
+    
+    def retrieve_user_password(self,Email):
+        password = "SELECT password FROM Users WHERE Email = '{}'".format(Email)
+        self.cursor.execute(password)
+        user_password = self.cursor.fetchall()
+        new_list = []
+        new_dict = {}
+        for i in user_password:
+            new_dict['q'] = i[0]
+            new_list.append(new_dict)
+            for k in new_list:
+                the_password = k['q']
+        return the_password
 
 
 
