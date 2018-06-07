@@ -32,7 +32,7 @@ class USERS:
             user_dictionary = {}
         return user_list
 
-    def get_user_Id(self,Email):
+    def retrieve_user_Id(self,Email):
         user = "SELECT User_Id FROM Users WHERE Email = '{}'".format(Email)
         self.cursor.execute(user)
         user_id = self.cursor.fetchall()
