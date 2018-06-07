@@ -185,6 +185,17 @@ class Administrator():
         self.cursor.execute(request)
         self.dbconnect.commit()
 
+    def check_for_request(self,request_id):
+        request = "SELECT Request_Id FROM Requests WHERE Request_Id = '{}'".format(request_id)
+        self.cursor.execute(request)
+        self.dbconnect.commit()
+        requuestId = self.cursor.fetchall()
+        if len(requuestId) == 0:
+            return False
+        else:
+            return True    
+
+
    
 
     
