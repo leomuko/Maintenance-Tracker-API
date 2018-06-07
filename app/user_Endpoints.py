@@ -4,7 +4,7 @@ from models import USERS
 import jwt 
 from functools import wraps
 from models import Requests
-
+import re
 
 
 
@@ -41,7 +41,18 @@ def user_signup():
     Lastname = request.json.get('Lastname')
     Email = request.json.get('Email')
     password = request.json.get('password')
-    User_table.create_new_user(Firstname, Lastname,Email,password)
+    if not Firstname:
+        return jsonify({'Message':'Please Enter FisrtName'})
+    elif not Lastname:
+        return jsonify({'Message':'Please Enter LastName'})
+    elif not Email:
+        return jsonify({'Message':'Please Enter Email'})
+    elif not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]", Email):
+        return jsonify({'Message':'Enter valid Email'})
+    elif not password:
+        return jsonify({'Message':'Please Enter Password'})
+    else:
+       User_table.create_new_user(Firstname, Lastname,Email,password)
 
     return jsonify({'Message': 'New User Created'}), 201
 
@@ -50,7 +61,7 @@ def user_login():
     Email = request.json.get('Email')
     password = request.json.get('password')
     if not User_table.login_user(Email,password):
-        return jsonify({'message':'wrong password and email'})
+        return jsonify({'message':'Please check your email or password'})
     else:
         token = jwt.encode({'Email':Email}, app.config['SECRET KEY'])   
         return jsonify({'token':token.decode('UTF-8')}),201
@@ -59,37 +70,71 @@ def user_login():
 @token_required
 def create_user_request(current_user):
     Email = request.json.get('Email')
-    Userid = User_table.retrieve_user_Id(Email)
+    
     RequestType = request.json.get('RequestType')
     RequestDetails = request.json.get('Details')
-    Request_table.create_new_user_request(Userid,RequestType,RequestDetails)
-    return jsonify({'message':'Request created successfully'}),200
+    if not Email:
+        return jsonify({'Message':'Please Review your Email'})
+    elif not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]", Email):
+        return jsonify({'Message':'Please Review your Email'})
+    elif Email != current_user['Email']:
+        return jsonify({'Message':'Enter valid Email'})    
+    elif not RequestType:
+        return jsonify({'message':'Please enter Request Type'})
+    elif not RequestDetails:
+        return jsonify({'message':'Please Enter Request Details'})    
+    else:
+        Userid = User_table.retrieve_user_Id(Email)
+        Request_table.create_new_user_request(Userid,RequestType,RequestDetails)
+        return jsonify({'message':'Request created successfully'}),200
 
 
 @app.route('/users/requests', methods=['GET'])
 @token_required
 def view_all_requests(current_user):
-   
    Email = current_user['Email']
    Userid = User_table.retrieve_user_Id(Email)
-   return jsonify(Request_table.all_requests_for_specific_user(Userid))
+   req= Request_table.all_requests_for_specific_user(Userid)
+   if len(req) == 0:
+       return jsonify({'message':'You have no requests'})
+   else:
+       return jsonify(req)
 
 
 @app.route('/users/requests/<int:Request_id>', methods=['GET'])
 @token_required
 def view_specific_request(current_user,Request_id):
-    return jsonify(Request_table.specific_request(Request_id))
-
-  
-
-
+    Email = current_user['Email']
+    Userid = User_table.retrieve_user_Id(Email)
+    spec_requests = Request_table.specific_request(Request_id,Userid)
+    if len(spec_requests) == 0:
+        return jsonify({'message':' Please Enter valid request id'})
+    else:    
+        return jsonify(spec_requests)
+   
 @app.route('/users/requests/<int:Request_id>', methods=['PUT'])
 @token_required
-def modify_user_request(current_User,Request_id):
+def modify_user_request(current_user,Request_id):
     R_type = request.json.get('RequestType')
     R_details = request.json.get('Details')
-    Request_table.modify_request(Request_id,R_type,R_details) 
-    return jsonify({'message':'Request successfully modified'})        
+    inputEmail = request.json.get('Email')
+    Email = current_user['Email']
+    Userid = User_table.retrieve_user_Id(Email)
+    if not inputEmail:
+        return jsonify({'Message':'Please Enter your Email'})
+    elif not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]", inputEmail):
+        return jsonify({'Message':'Please Review your Email'})
+    elif inputEmail != current_user['Email']:
+        return jsonify({'Message':'Enter valid Email'})
+    elif not R_type:
+        return jsonify({'message':'Enter request type'})
+    elif not R_details:
+        return jsonify({'message':'Enter request details'})
+    elif Request_table.check_if_request_exists(Userid, Request_id) is False:
+        return jsonify({'message':'You do not have access to the request'})   
+    else:   
+       Request_table.modify_request(Request_id,R_type,R_details) 
+       return jsonify({'message':'Request successfully modified'})        
 
     
 
