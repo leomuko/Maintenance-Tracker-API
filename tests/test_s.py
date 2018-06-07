@@ -9,7 +9,7 @@ class TestRequests(unittest.TestCase):
  
     def test_user_signup(self):
         self.client = app.test_client
-        response = self.client().post('/auth/signup',  content_type="application/json", data = json.dumps(dict(FirstName = 'katwere', LastName = 'Leo', Email ='kat@gmail',password ='password'))) 
+        response = self.client().post('/auth/signup',  content_type="application/json", data = json.dumps(dict(FirstName = 'katwere', LastName = 'Leo', Email ='kat@gmail.com',password ='password'))) 
         self.assertEqual(response.status_code, 201)
 
     def test_login_user(self):
@@ -22,14 +22,14 @@ class TestRequests(unittest.TestCase):
 
     def test_create_request(self):
         self.client = app.test_client
-        user_request ={ 
+        user_request ={ 'Email': 'kat@gmail.com',
                         'RequestType': 'Pc shutdown',
                          'Details': 'My pc cant turn back on'
                        }    
         response = self.client().post('/users/requests',  content_type="application/json",data = json.dumps(user_request))
         self.assertEqual(response.status_code, 200)
 
-   
+
 
 
 
