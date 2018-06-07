@@ -96,7 +96,7 @@ def view_all_requests(current_user):
    Userid = User_table.retrieve_user_Id(Email)
    req= Request_table.all_requests_for_specific_user(Userid)
    if len(req) == 0:
-       return jsonify({'message':'You have no requests'})
+       return jsonify({'message':'You have no requests'})    
    else:
        return jsonify(req)
 
