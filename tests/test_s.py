@@ -29,22 +29,7 @@ class TestRequests(unittest.TestCase):
         response = self.client().post('/users/requests',  content_type="application/json",data = json.dumps(user_request))
         self.assertEqual(response.status_code, 200)
 
-    def test_specific_user_requests(self):
-        self.client = app.test_client
-        user_data = {'Email':'what@gmail'}
-        response = self.client().get('api/v1/users/requests/9',  content_type="application/json",data = json.dumps(user_data))
-        self.assertEqual(response.status_code, 200)
-
-
-    def test_modify_request(self):
-        self.client = app.test_client
-        user_request ={ 
-                        'requestType': 'Pc shutdown',
-                         'details': 'My pc cant turn back on'
-                       }    
-        response = self.client().put('/api/v1/users/requests/1', content_type = "application/json", data=json.dumps(user_request))
-        self.assertEqual(response.status_code, 200)
-
+   
 
 
 
