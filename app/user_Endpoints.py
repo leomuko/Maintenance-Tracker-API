@@ -60,8 +60,7 @@ def user_signup():
         return jsonify({'message':'Enter stronger password'})  
     else:
        User_table.create_new_user(Firstname, Lastname,Email,hashed_password)
-
-    return jsonify({'Message': 'New User Created'}), 201
+       return jsonify({'Message': 'New User Created'}), 201
 
 @app.route('/auth/login', methods=['POST'])
 def user_login():
